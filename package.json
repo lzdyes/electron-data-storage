@@ -1,7 +1,10 @@
 {
   "name": "electron-data-storage",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Simple data persistence for Electron app",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": "lzdyes",
   "license": "MIT",
   "scripts": {
     "build": "tsc"
@@ -9,5 +12,12 @@
   "devDependencies": {
     "@types/node": "^15.12.4",
     "electron": "^13.1.4"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:lzdyes/electron-data-storage.git"
   }
 }
