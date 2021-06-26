@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs'
 import { readFile, writeFile } from 'fs/promises'
 import path from 'path'
 import electron from 'electron'
@@ -57,6 +58,12 @@ export default class storage {
 
   static async get(key: string): Promise<string | number | boolean | undefined> {
     const str = await this.readFile()
+    const obj = JSON.parse(str)
+    return obj[key]
+  }
+
+  static async getSync(key: string): Promise<string | number | boolean | undefined> {
+    const str = readFileSync(configPath, 'utf8') || '{}'
     const obj = JSON.parse(str)
     return obj[key]
   }
