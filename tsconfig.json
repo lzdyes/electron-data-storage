@@ -10,5 +10,6 @@
     "removeComments": true,
     "baseUrl": ".",
     "outDir": "dist"
-  }
+  },
+  "include": ["src"]
 }
