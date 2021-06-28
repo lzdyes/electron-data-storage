@@ -30,7 +30,12 @@ You can require this module in Electron **main** or **renderer** process.
 #### storage.set(key: string, value: string | number | boolean): Promise<void>
 
 ```ts
-storage.set(key, value).catch((error) => console.error(error))
+storage
+  .set(key, value)
+  .then(() => {
+    console.log('set value success')
+  })
+  .catch((error) => console.error(error))
 
 // or use async/await
 
@@ -66,13 +71,13 @@ console.log(value)
 
 ### remove
 
-#### storage.remove(key: string): Promise<void>
+#### storage.remove(key: string): Promise\<void>
 
 ```ts
 storage
   .remove(key)
   .then(() => {
-    console.log('remove success')
+    console.log('remove value success')
   })
   .catch((error) => console.error(error))
 
@@ -83,13 +88,13 @@ await storage.remove(key)
 
 ### clear
 
-#### storage.clear(): Promise<void>
+#### storage.clear(): Promise\<void>
 
 ```ts
 storage
   .clear()
   .then(() => {
-    console.log('clear success')
+    console.log('clear storage success')
   })
   .catch((error) => console.error(error))
 
