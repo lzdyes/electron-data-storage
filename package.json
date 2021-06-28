@@ -1,6 +1,6 @@
 {
   "name": "electron-data-storage",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Simple data persistence for Electron app",
   "author": "lzdyes",
   "main": "dist/index.js",
