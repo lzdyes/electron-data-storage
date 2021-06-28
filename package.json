@@ -7,7 +7,8 @@
   "author": "lzdyes",
   "license": "MIT",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "publish": "build && npm version patch && npm publish"
   },
   "devDependencies": {
     "@types/node": "^15.12.4",

@@ -13,7 +13,7 @@ export default class storage {
   static waitUnlockTimes = 3
   static waitUnlockInterval = 100
 
-  static async waitUnlock(): Promise<void> {
+  private static async waitUnlock(): Promise<void> {
     return new Promise((resolve, reject) => {
       let times = this.waitUnlockTimes
       const timer = setInterval(async () => {
@@ -31,14 +31,24 @@ export default class storage {
     })
   }
 
-  static async readFile() {
+  private static async readFile() {
     const str = await readFile(configPath, 'utf8').catch((error) => {
       if (error.code !== 'ENOENT') throw error
     })
     return str || '{}'
   }
 
-  static async writeFile(str: string) {
+  private static readFileSync() {
+    let str = '{}'
+    try {
+      str = readFileSync(configPath, 'utf8')
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error
+    }
+    return str
+  }
+
+  private static async writeFile(str: string) {
     await writeFile(configPath, str, 'utf8').catch((error) => {
       throw error
     })
@@ -62,8 +72,8 @@ export default class storage {
     return obj[key]
   }
 
-  static async getSync(key: string): Promise<string | number | boolean | undefined> {
-    const str = readFileSync(configPath, 'utf8') || '{}'
+  static getSync(key: string): string | number | boolean | undefined {
+    const str = this.readFileSync()
     const obj = JSON.parse(str)
     return obj[key]
   }
