@@ -27,7 +27,7 @@ You can require this module in Electron **main** or **renderer** process.
 
 ### set
 
-#### storage.set(key: string, value: string | number | boolean): Promise<void>
+#### storage.set(key: string, value: string | number | boolean): Promise\<void>
 
 ```ts
 storage
@@ -105,7 +105,7 @@ await storage.clear()
 
 ## Tests
 
-Use Jest, in **test/index.tset.ts**
+Use Jest, edit in **test/index.tset.ts**
 
 ```sh
 $ yarn test

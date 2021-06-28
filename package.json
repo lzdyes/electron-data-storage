@@ -2,7 +2,7 @@
   "name": "electron-data-storage",
   "version": "1.0.5",
   "description": "Simple data persistence for Electron app",
-  "author": "lzdyes <lzdyes@gmail.com>",
+  "author": "lzdyes",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
