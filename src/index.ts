@@ -16,12 +16,12 @@ export default class storage {
   private static async waitUnlock(): Promise<void> {
     return new Promise((resolve, reject) => {
       let times = this.waitUnlockTimes
-      const timer = setInterval(async () => {
+      const timer = setInterval(() => {
         if (times-- <= 0) {
           clearInterval(timer)
           reject(new Error('the file is locked'))
         } else {
-          const isLocked = await locker.isLocked()
+          const isLocked = locker.isLocked()
           if (!isLocked) {
             clearInterval(timer)
             resolve()
@@ -55,15 +55,15 @@ export default class storage {
   }
 
   static async set(key: string, value: string | number | boolean) {
-    const isLocked = await locker.isLocked()
+    const isLocked = locker.isLocked()
     isLocked && (await this.waitUnlock())
-    await locker.lock()
+    locker.lock()
     const str = await this.readFile()
     const obj = JSON.parse(str)
     obj[key] = value
     const str2 = JSON.stringify(obj)
     await this.writeFile(str2)
-    await locker.unlock()
+    locker.unlock()
   }
 
   static async get(key: string): Promise<string | number | boolean | undefined> {
@@ -79,22 +79,22 @@ export default class storage {
   }
 
   static async remove(key: string) {
-    const isLocked = await locker.isLocked()
+    const isLocked = locker.isLocked()
     isLocked && (await this.waitUnlock())
-    await locker.lock()
+    locker.lock()
     const str = await this.readFile()
     const obj = JSON.parse(str)
     delete obj[key]
     const str2 = JSON.stringify(obj)
     await this.writeFile(str2)
-    await locker.unlock()
+    locker.unlock()
   }
 
   static async clear() {
-    const isLocked = await locker.isLocked()
+    const isLocked = locker.isLocked()
     isLocked && (await this.waitUnlock())
-    await locker.lock()
+    locker.lock()
     await this.writeFile('{}')
-    await locker.unlock()
+    locker.unlock()
   }
 }
