@@ -10,7 +10,7 @@ export default class locker {
   }
 
   static lock() {
-    isLocked4Process = !!mkdirSync(this.lockDir, { recursive: true })
+    if (mkdirSync(this.lockDir, { recursive: true })) isLocked4Process = true
   }
 
   static unlock() {
