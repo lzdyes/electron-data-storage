@@ -1,6 +1,6 @@
 # electron-data-storage
 
-> Simple data persistence for Electron app
+> Simple data persistence for Electron app, It's **Thread safety**, Can be called directly from the main process and the renderer process.
 
 [![npm version](https://badge.fury.io/js/electron-data-storage.svg)](http://badge.fury.io/js/electron-data-storage)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/lzdyes/electron-data-storage)
@@ -19,6 +19,11 @@ $ yarn add electron-data-storage
 
 ```ts
 import storage from 'electron-data-storage'
+
+storage.set('hi', 'Hello World!')
+storage.get('hi')
+storage.remove('hi')
+storage.clear()
 ```
 
 You can require this module in Electron **main** or **renderer** process.
@@ -27,80 +32,35 @@ You can require this module in Electron **main** or **renderer** process.
 
 ### set
 
-#### storage.set(key: string, value: string | number | boolean): Promise\<void>
+#### storage.set(key: string, value: string | number | boolean)
 
 ```ts
-storage
-  .set(key, value)
-  .then(() => {
-    console.log('set value success')
-  })
-  .catch((error) => console.error(error))
-
-// or use async/await
-
-await storage.set(key, value)
+storage.set(key, value)
 ```
 
 ### get
 
-#### storage.get(key: string): Promise<string | number | boolean | undefined>
+#### storage.get(key: string): string | number | boolean | undefined
 
 ```ts
-storage
-  .get(key)
-  .then((value) => {
-    console.log(value)
-  })
-  .catch((error) => console.error(error))
-
-// or use async/await
-
-const value = await storage.get(key)
-console.log(value)
-```
-
-### getSync
-
-#### storage.getSync(key: string): string | number | boolean | undefined
-
-```ts
-const value = storage.getSync(key)
+const value = storage.get(key)
 console.log(value)
 ```
 
 ### remove
 
-#### storage.remove(key: string): Promise\<void>
+#### storage.remove(key: string)
 
 ```ts
-storage
-  .remove(key)
-  .then(() => {
-    console.log('remove value success')
-  })
-  .catch((error) => console.error(error))
-
-// or use async/await
-
-await storage.remove(key)
+storage.remove(key)
 ```
 
 ### clear
 
-#### storage.clear(): Promise\<void>
+#### storage.clear()
 
 ```ts
-storage
-  .clear()
-  .then(() => {
-    console.log('clear storage success')
-  })
-  .catch((error) => console.error(error))
-
-// or use async/await
-
-await storage.clear()
+storage.clear()
 ```
 
 ## Tests
