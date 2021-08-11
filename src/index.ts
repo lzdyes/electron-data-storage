@@ -71,7 +71,7 @@ export default class storage {
     this.update()
   }
 
-  static get(key: string) {
+  static get(key: string): string | number | boolean | undefined {
     if (this.saveMap.has(key)) return this.saveMap.get(key)
     if (this.removeKeySet.has(key)) return
 

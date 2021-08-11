@@ -22,9 +22,10 @@
   "files": [
     "dist"
   ],
+  "homepage": "https://github.com/lzdyes/electron-data-storage",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lzdyes/electron-data-storage.git"
+    "url": "git://github.com/lzdyes/electron-data-storage.git"
   },
   "keywords": [
     "electron",
