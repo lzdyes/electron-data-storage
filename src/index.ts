@@ -1,5 +1,4 @@
-import { readFileSync } from 'fs'
-import { readFile, writeFile } from 'fs/promises'
+import { readFileSync, writeFileSync } from 'fs'
 import path from 'path'
 import electron from 'electron'
 import locker from './lock'
@@ -12,6 +11,10 @@ locker.lockDir = path.join(userDataPath, 'config.lock')
 export default class storage {
   static waitUnlockTimes = 3
   static waitUnlockInterval = 100
+
+  static timer?: NodeJS.Timeout
+  static saveMap = new Map<string, string | number | boolean>()
+  static removeKeySet = new Set<string>()
 
   private static async waitUnlock(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -31,13 +34,6 @@ export default class storage {
     })
   }
 
-  private static async readFile() {
-    const str = await readFile(configPath, 'utf8').catch((error) => {
-      if (error.code !== 'ENOENT') throw error
-    })
-    return str || '{}'
-  }
-
   private static readFileSync() {
     let str = '{}'
     try {
@@ -48,53 +44,53 @@ export default class storage {
     return str
   }
 
-  private static async writeFile(str: string) {
-    await writeFile(configPath, str, 'utf8').catch((error) => {
-      throw error
+  private static update() {
+    if (this.timer) return
+
+    this.timer = setTimeout(async () => {
+      const isLocked = locker.isLocked()
+      isLocked && (await this.waitUnlock())
+
+      this.timer = undefined
+
+      locker.lock()
+      const str = this.readFileSync()
+      const obj = JSON.parse(str)
+      this.removeKeySet.forEach((key) => delete obj[key])
+      this.removeKeySet.clear()
+      this.saveMap.forEach((value, key) => (obj[key] = value))
+      this.saveMap.clear()
+      const str2 = JSON.stringify(obj)
+      writeFileSync(configPath, str2)
+      locker.unlock()
     })
   }
 
-  static async set(key: string, value: string | number | boolean) {
-    const isLocked = locker.isLocked()
-    isLocked && (await this.waitUnlock())
-    locker.lock()
-    const str = await this.readFile()
-    const obj = JSON.parse(str)
-    obj[key] = value
-    const str2 = JSON.stringify(obj)
-    await this.writeFile(str2)
-    locker.unlock()
+  static set(key: string, value: string | number | boolean) {
+    this.saveMap.set(key, value)
+    this.update()
   }
 
-  static async get(key: string): Promise<string | number | boolean | undefined> {
-    const str = await this.readFile()
-    const obj = JSON.parse(str)
-    return obj[key]
-  }
+  static get(key: string) {
+    if (this.saveMap.has(key)) return this.saveMap.get(key)
+    if (this.removeKeySet.has(key)) return
 
-  static getSync(key: string): string | number | boolean | undefined {
     const str = this.readFileSync()
     const obj = JSON.parse(str)
     return obj[key]
   }
 
-  static async remove(key: string) {
-    const isLocked = locker.isLocked()
-    isLocked && (await this.waitUnlock())
-    locker.lock()
-    const str = await this.readFile()
-    const obj = JSON.parse(str)
-    delete obj[key]
-    const str2 = JSON.stringify(obj)
-    await this.writeFile(str2)
-    locker.unlock()
+  static remove(key: string) {
+    this.saveMap.delete(key)
+    this.removeKeySet.add(key)
+    this.update()
   }
 
-  static async clear() {
-    const isLocked = locker.isLocked()
-    isLocked && (await this.waitUnlock())
-    locker.lock()
-    await this.writeFile('{}')
-    locker.unlock()
+  static clear() {
+    this.saveMap.clear()
+    const str = this.readFileSync()
+    const obj = JSON.parse(str)
+    Object.keys(obj).forEach((key) => this.removeKeySet.add(key))
+    this.update()
   }
 }
