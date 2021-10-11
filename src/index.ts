@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'fs'
+import { readFileSync, writeFileSync, rmSync } from 'fs'
 import path from 'path'
 import electron from 'electron'
 import locker from './lock'
@@ -38,10 +38,21 @@ export default class storage {
     let str = '{}'
     try {
       str = readFileSync(configPath, 'utf8')
-    } catch (error) {
+    } catch (error: any) {
       if (error.code !== 'ENOENT') throw error
     }
     return str
+  }
+
+  private static parse(str: string): any {
+    let obj = {}
+    try {
+      obj = JSON.parse(str)
+    } catch {
+      console.error('config.json data is corrupted')
+      rmSync(configPath)
+    }
+    return obj
   }
 
   private static update() {
@@ -55,7 +66,7 @@ export default class storage {
 
       locker.lock()
       const str = this.readFileSync()
-      const obj = JSON.parse(str)
+      const obj = this.parse(str)
       this.removeKeySet.forEach((key) => delete obj[key])
       this.removeKeySet.clear()
       this.saveMap.forEach((value, key) => (obj[key] = value))
@@ -76,7 +87,7 @@ export default class storage {
     if (this.removeKeySet.has(key)) return
 
     const str = this.readFileSync()
-    const obj = JSON.parse(str)
+    const obj = this.parse(str)
     return obj[key]
   }
 
@@ -89,7 +100,7 @@ export default class storage {
   static clear() {
     this.saveMap.clear()
     const str = this.readFileSync()
-    const obj = JSON.parse(str)
+    const obj = this.parse(str)
     Object.keys(obj).forEach((key) => this.removeKeySet.add(key))
     this.update()
   }
